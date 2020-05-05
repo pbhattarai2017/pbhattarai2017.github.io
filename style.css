@@ -3,28 +3,43 @@
   padding: 0px;
 }
 
+html,
+body {
+  height: 100%;
+}
+
+body {
+  background-image: url("grad-background.svg");
+  background-repeat: no-repeat;
+  background-size: cover;
+  overflow: hidden;
+}
+
 .container {
   position: relative;
   transform: translate(calc(50vw - 50%), calc(50vh - 50%));
-  width: 50vw;
   display: grid;
+  width: 30vw;
   grid-template-columns: 1fr;
   gap: 10px;
 }
 
 a {
   padding: 16px;
-  background-color: blue;
+  background-color: #54a8e9;
   text-decoration: none;
   color: white;
-  border: 2px solid blue;
+  border: 2px solid #54a8e9;
   border-radius: 20px;
   text-transform: uppercase;
+  text-align: center;
   font-size: 1.1rem;
   font-family: Cambria, Cochin, Georgia, Times, "Times New Roman", serif;
+  transition: color 400ms;
+  transition-timing-function: ease-out;
 }
 
 a:hover {
-  color: blue;
+  color: #54a8e9;
   background-color: white;
 }
