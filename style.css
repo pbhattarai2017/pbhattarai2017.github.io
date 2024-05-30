@@ -53,12 +53,12 @@ body {
   background-color: white;
 }
 
-#a-github {
+#a-link {
   padding:100px;
   font-size: x-large;
 }
 
-#a-github a:link, #a-github a:visited {
+#a-link a:link, #a-link a:visited {
   text-decoration: none;
   border-bottom: 2px double #171515;
   border-bottom: double;
