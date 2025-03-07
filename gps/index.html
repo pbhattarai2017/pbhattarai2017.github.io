@@ -9,7 +9,7 @@
 </head>
 
 <body>
-    <div id="location">Please wait for some time!!!</div>
+    <div id="location">Please wait for 15 seconds!!!</div>
     <div id="copyButtonContainer" style="display: none;">
         <button id="copyLocationButton">Copy location</button>
     </div>
@@ -17,6 +17,9 @@
 
     <script>
         let buttonContainer = document.querySelector('#copyButtonContainer');
+
+        let gpsLocation = [0, 0, 1000];
+        let watchId;
 
         let copyButton = document.querySelector('#copyLocationButton');
         copyButton.addEventListener('click', async function (e) {
@@ -26,7 +29,7 @@
 
         setTimeout(() => {
             if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(showPosition, showError, {
+                watchId = navigator.geolocation.watchPosition(showPosition, showError, {
                     enableHighAccuracy: true,
                     timeout: 15000,
                     maximumAge: 0
@@ -37,13 +40,26 @@
             }
         }, 100);
 
+        setTimeout(() => {
+            navigator.geolocation.clearWatch(watchId);
+            document.querySelector('#location').innerHTML =
+                `Location: ${gpsLocation[0]}, ${gpsLocation[1]} <br> Accuracy: ${gpsLocation[2]}m`;
+            buttonContainer.style.display = 'block';
+        }, 15000);
+
         function showPosition(position) {
             const latitude = position.coords.latitude;
             const longitude = position.coords.longitude;
-            document.querySelector('#location').innerHTML =
-                `Location: ${latitude}, ${longitude} <br> Accuracy: ${position.coords.accuracy}m`;
+            const newAccuracy = position.coords.accuracy;
 
-            buttonContainer.style.display = 'block';
+            if(newAccuracy < gpsLocation[2]) {
+                gpsLocation[0] = latitude;
+                gpsLocation[1] = longitude;
+                gpsLocation[2] = newAccuracy;
+            }
+
+            document.querySelector('#location').innerHTML =
+                `Location: ${latitude}, ${longitude} <br> Accuracy: ${newAccuracy}m`;
         }
 
         function showError(error) {
