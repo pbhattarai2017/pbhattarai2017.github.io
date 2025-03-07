@@ -20,7 +20,7 @@
             if (navigator.geolocation) {
                 watchId = navigator.geolocation.watchPosition(showPosition, showError, {
                     enableHighAccuracy: true,
-                    timeout: 15000,
+                    timeout: 10000,
                     maximumAge: 0
                 });
             } else {
@@ -29,7 +29,7 @@
             }
         }, 100);
 
-        setTimeout(async function() {
+        let timeoutId = setTimeout(async function() {
             navigator.geolocation.clearWatch(watchId);
             document.querySelector('#location').innerHTML =
                 `Location: ${gpsLocation[0]}, ${gpsLocation[1]} <br> Accuracy: ${gpsLocation[2]}m`;
@@ -68,6 +68,8 @@
                         "An unknown error occurred. This may be due to an insecure origin (use HTTPS or localhost).";
                     break;
             }
+            document.querySelector('#locationCopied').innerHTML = 'Please refresh the page.';
+            clearTimeout(timeoutId);
         }
 
     </script>
