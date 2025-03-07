@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <div id="location"></div>
+    <div id="copyButtonContainer" style="display: none;">
+        <button id="copyLocationButton">Copy location</button>
+    </div>
+
+    <script>
+        let buttonContainer = document.querySelector('#copyButtonContainer');
+
+        let copyButton = document.querySelector('#copyLocationButton');
+        copyButton.addEventListener('click', async function (e) {
+            await navigator.clipboard.writeText(document.querySelector('#location').innerText);
+        });
+
+        setTimeout(() => {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(showPosition, showError, {
+                    enableHighAccuracy: true,
+                    timeout: 10000,
+                    maximumAge: 0
+                });
+            } else {
+                document.querySelector('#location').innerHTML =
+                    "Geolocation is not supported by this browser.";
+            }
+        }, 100);
+
+        function showPosition(position) {
+            const latitude = position.coords.latitude;
+            const longitude = position.coords.longitude;
+            document.querySelector('#location').innerHTML =
+                `Location: ${latitude}, ${longitude}`;
+
+            buttonContainer.style.display = 'block';
+        }
+
+        function showError(error) {
+            switch (error.code) {
+                case error.PERMISSION_DENIED:
+                    document.querySelector('#location').innerHTML =
+                        "User denied the request for Geolocation.";
+                    break;
+                case error.POSITION_UNAVAILABLE:
+                    document.querySelector('#location').innerHTML =
+                        "Location information is unavailable.";
+                    break;
+                case error.TIMEOUT:
+                    document.querySelector('#location').innerHTML =
+                        "The request to get location timed out.";
+                    break;
+                case error.UNKNOWN_ERROR:
+                    document.querySelector('#location').innerHTML =
+                        "An unknown error occurred. This may be due to an insecure origin (use HTTPS or localhost).";
+                    break;
+            }
+        }
+
+    </script>
+
+</body>
+
+</html>
