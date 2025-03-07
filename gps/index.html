@@ -71,6 +71,8 @@
                         "An unknown error occurred. This may be due to an insecure origin (use HTTPS or localhost).";
                     break;
             }
+
+            document.querySelector('#location').innerHTML = error.message;
         }
 
     </script>
