@@ -5,27 +5,16 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>GPS Calculator</title>
 </head>
 
 <body>
     <div id="location"></div>
-    <!-- <div id="copyButtonContainer" style="display: none;">
-        <button id="copyLocationButton">Copy location</button>
-    </div> -->
     <p id="locationCopied">Please wait for 30 seconds...</p>
 
     <script>
-        // let buttonContainer = document.querySelector('#copyButtonContainer');
-
         let gpsLocation = [0, 0, 1000];
         let watchId;
-
-        // let copyButton = document.querySelector('#copyLocationButton');
-        // copyButton.addEventListener('click', async function (e) {
-        //     await navigator.clipboard.writeText(document.querySelector('#location').innerText);
-        //     document.querySelector('#locationCopied').style.display = 'block';
-        // });
 
         setTimeout(() => {
             if (navigator.geolocation) {
@@ -44,7 +33,6 @@
             navigator.geolocation.clearWatch(watchId);
             document.querySelector('#location').innerHTML =
                 `Location: ${gpsLocation[0]}, ${gpsLocation[1]} <br> Accuracy: ${gpsLocation[2]}m`;
-            // buttonContainer.style.display = 'block';
             await navigator.clipboard.writeText(document.querySelector('#location').innerText);
             document.querySelector('#locationCopied').innerHTML = '<b>Location copied!</b>';
         }, 30000);
