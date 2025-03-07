@@ -10,6 +10,9 @@
 
 <body>
     <div id="location"></div>
+    <div id="copyButtonContainer" style="display: none;">
+        <button id="copyButton">Copy location</button>
+    </div>
     <p id="locationCopied">Please wait for 30 seconds...</p>
 
     <script>
@@ -33,9 +36,13 @@
             navigator.geolocation.clearWatch(watchId);
             document.querySelector('#location').innerHTML =
                 `Location: ${gpsLocation[0]}, ${gpsLocation[1]} <br> Accuracy: ${gpsLocation[2]}m`;
+                document.querySelector('#copyButtonContainer').style.display = 'block';
+        }, 30000);
+
+        document.querySelector('#copyButton').addEventListener('click', async function() {
             await navigator.clipboard.writeText(document.querySelector('#location').innerText);
             document.querySelector('#locationCopied').innerHTML = '<b>Location copied!</b>';
-        }, 30000);
+        });
 
         function showPosition(position) {
             const latitude = position.coords.latitude;
