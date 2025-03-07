@@ -55,12 +55,9 @@
         function showError(error) {
             switch (error.code) {
                 case error.PERMISSION_DENIED:
-                    document.querySelector('#location').innerHTML =
-                        "User denied the request for Geolocation.";
-                    break;
                 case error.POSITION_UNAVAILABLE:
                     document.querySelector('#location').innerHTML =
-                        "Location information is unavailable.";
+                        "Please make sure that your GPS is turned ON.";
                     break;
                 case error.TIMEOUT:
                     document.querySelector('#location').innerHTML =
@@ -71,8 +68,6 @@
                         "An unknown error occurred. This may be due to an insecure origin (use HTTPS or localhost).";
                     break;
             }
-
-            document.querySelector('#location').innerHTML = error.message;
         }
 
     </script>
