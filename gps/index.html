@@ -18,6 +18,9 @@
     <script>
         let gpsLocation = [0, 0, 1000];
         let watchId;
+        let remainingSeconds = 30;
+
+        let info = document.querySelector('#locationCopied');
 
         setTimeout(() => {
             if (navigator.geolocation) {
@@ -26,6 +29,13 @@
                     timeout: 10000,
                     maximumAge: 0
                 });
+                setInterval(() => {
+                    remainingSeconds --;
+                    if(remainingSeconds < 1) {
+                        remainingSeconds = 1;
+                    }
+                    info.innerHTML = `Please wait for ${remainingSeconds} seconds...`;
+                }, 1000);
             } else {
                 document.querySelector('#location').innerHTML =
                     "Geolocation is not supported by this browser.";
@@ -41,7 +51,7 @@
 
         document.querySelector('#copyButton').addEventListener('click', async function() {
             await navigator.clipboard.writeText(document.querySelector('#location').innerText);
-            document.querySelector('#locationCopied').innerHTML = '<b>Location copied!</b>';
+            info.innerHTML = '<b>Location copied!</b>';
         });
 
         function showPosition(position) {
@@ -75,7 +85,7 @@
                         "An unknown error occurred. This may be due to an insecure origin (use HTTPS or localhost).";
                     break;
             }
-            document.querySelector('#locationCopied').innerHTML = 'Please refresh the page.';
+            info.innerHTML = 'Please refresh the page.';
             clearTimeout(timeoutId);
         }
 
