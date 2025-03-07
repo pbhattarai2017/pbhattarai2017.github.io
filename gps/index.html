@@ -19,6 +19,7 @@
         let gpsLocation = [0, 0, 1000];
         let watchId;
         let remainingSeconds = 30;
+        let intervalId;
 
         let info = document.querySelector('#locationCopied');
 
@@ -29,7 +30,7 @@
                     timeout: 10000,
                     maximumAge: 0
                 });
-                setInterval(() => {
+                intervalId = setInterval(() => {
                     remainingSeconds --;
                     if(remainingSeconds < 1) {
                         remainingSeconds = 1;
@@ -52,6 +53,7 @@
         document.querySelector('#copyButton').addEventListener('click', async function() {
             await navigator.clipboard.writeText(document.querySelector('#location').innerText);
             info.innerHTML = '<b>Location copied!</b>';
+            clearInterval(intervalId);
         });
 
         function showPosition(position) {
