@@ -9,10 +9,11 @@
 </head>
 
 <body>
-    <div id="location"></div>
+    <div id="location">Please wait for some time!!!</div>
     <div id="copyButtonContainer" style="display: none;">
         <button id="copyLocationButton">Copy location</button>
     </div>
+    <p id="locationCopied" style="display: none;">Location copied!</p>
 
     <script>
         let buttonContainer = document.querySelector('#copyButtonContainer');
@@ -20,13 +21,14 @@
         let copyButton = document.querySelector('#copyLocationButton');
         copyButton.addEventListener('click', async function (e) {
             await navigator.clipboard.writeText(document.querySelector('#location').innerText);
+            document.querySelector('#locationCopied').style.display = 'block';
         });
 
         setTimeout(() => {
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(showPosition, showError, {
                     enableHighAccuracy: true,
-                    timeout: 10000,
+                    timeout: 15000,
                     maximumAge: 0
                 });
             } else {
@@ -39,7 +41,7 @@
             const latitude = position.coords.latitude;
             const longitude = position.coords.longitude;
             document.querySelector('#location').innerHTML =
-                `Location: ${latitude}, ${longitude}`;
+                `Location: ${latitude}, ${longitude} <br> Accuracy: ${position.coords.accuracy}m`;
 
             buttonContainer.style.display = 'block';
         }
