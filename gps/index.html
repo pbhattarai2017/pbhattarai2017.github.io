@@ -13,7 +13,7 @@
     <div id="copyButtonContainer" style="display: none;">
         <button id="copyLocationButton">Copy location</button>
     </div>
-    <p id="locationCopied" style="display: none;">Location copied!</p>
+    <p id="locationCopied">Please wait...</p>
 
     <script>
         let buttonContainer = document.querySelector('#copyButtonContainer');
@@ -45,7 +45,7 @@
             document.querySelector('#location').innerHTML =
                 `Location: ${gpsLocation[0]}, ${gpsLocation[1]} <br> Accuracy: ${gpsLocation[2]}m`;
             buttonContainer.style.display = 'block';
-        }, 15000);
+        }, 20000);
 
         function showPosition(position) {
             const latitude = position.coords.latitude;
