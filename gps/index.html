@@ -9,23 +9,23 @@
 </head>
 
 <body>
-    <div id="location">Please wait for 15 seconds!!!</div>
-    <div id="copyButtonContainer" style="display: none;">
+    <div id="location">Please wait for some time!</div>
+    <!-- <div id="copyButtonContainer" style="display: none;">
         <button id="copyLocationButton">Copy location</button>
-    </div>
+    </div> -->
     <p id="locationCopied">Please wait...</p>
 
     <script>
-        let buttonContainer = document.querySelector('#copyButtonContainer');
+        // let buttonContainer = document.querySelector('#copyButtonContainer');
 
         let gpsLocation = [0, 0, 1000];
         let watchId;
 
-        let copyButton = document.querySelector('#copyLocationButton');
-        copyButton.addEventListener('click', async function (e) {
-            await navigator.clipboard.writeText(document.querySelector('#location').innerText);
-            document.querySelector('#locationCopied').style.display = 'block';
-        });
+        // let copyButton = document.querySelector('#copyLocationButton');
+        // copyButton.addEventListener('click', async function (e) {
+        //     await navigator.clipboard.writeText(document.querySelector('#location').innerText);
+        //     document.querySelector('#locationCopied').style.display = 'block';
+        // });
 
         setTimeout(() => {
             if (navigator.geolocation) {
@@ -40,11 +40,13 @@
             }
         }, 100);
 
-        setTimeout(() => {
+        setTimeout(async function() {
             navigator.geolocation.clearWatch(watchId);
             document.querySelector('#location').innerHTML =
                 `Location: ${gpsLocation[0]}, ${gpsLocation[1]} <br> Accuracy: ${gpsLocation[2]}m`;
-            buttonContainer.style.display = 'block';
+            // buttonContainer.style.display = 'block';
+            await navigator.clipboard.writeText(document.querySelector('#location').innerText);
+            document.querySelector('#locationCopied').innerHTML = 'Location copied';
         }, 20000);
 
         function showPosition(position) {
