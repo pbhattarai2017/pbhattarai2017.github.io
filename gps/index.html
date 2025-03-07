@@ -9,11 +9,11 @@
 </head>
 
 <body>
-    <div id="location">Please wait for some time!</div>
+    <div id="location"></div>
     <!-- <div id="copyButtonContainer" style="display: none;">
         <button id="copyLocationButton">Copy location</button>
     </div> -->
-    <p id="locationCopied">Please wait...</p>
+    <p id="locationCopied">Please wait for 30 seconds...</p>
 
     <script>
         // let buttonContainer = document.querySelector('#copyButtonContainer');
@@ -46,8 +46,8 @@
                 `Location: ${gpsLocation[0]}, ${gpsLocation[1]} <br> Accuracy: ${gpsLocation[2]}m`;
             // buttonContainer.style.display = 'block';
             await navigator.clipboard.writeText(document.querySelector('#location').innerText);
-            document.querySelector('#locationCopied').innerHTML = 'Location copied';
-        }, 20000);
+            document.querySelector('#locationCopied').innerHTML = '<b>Location copied!</b>';
+        }, 30000);
 
         function showPosition(position) {
             const latitude = position.coords.latitude;
