@@ -46,7 +46,7 @@
         let timeoutId = setTimeout(async function() {
             navigator.geolocation.clearWatch(watchId);
             document.querySelector('#location').innerHTML =
-                `Location: ${gpsLocation[0]}, ${gpsLocation[1]} <br> Accuracy: ${gpsLocation[2]}m`;
+                `Location: ${gpsLocation[0]}, ${gpsLocation[1]} <br> Accuracy: ${gpsLocation[2].toFixed(3)}m`;
                 document.querySelector('#copyButtonContainer').style.display = 'block';
             clearInterval(intervalId);
             info.innerHTML = 'Please press the above button to copy the location information.';
@@ -69,7 +69,7 @@
             }
 
             document.querySelector('#location').innerHTML =
-                `Location: ${latitude}, ${longitude} <br> Accuracy: ${newAccuracy}m`;
+                `Location: ${latitude}, ${longitude} <br> Accuracy: ${newAccuracy.toFixed(3)}m`;
         }
 
         function showError(error) {
