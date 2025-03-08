@@ -10,7 +10,7 @@
 
 <body>
     <div id="location"></div>
-    <div id="copyButtonContainer" style="display: none; margin: 16px 0px;">
+    <div id="copyButtonContainer" style="visibility: hidden; margin: 16px 0px;">
         <button id="copyButton" style="font-size: 20px; padding: 4px 8px">Copy location</button>
     </div>
     <p id="locationCopied" style="margin: 0;">Please wait ...</p>
@@ -47,7 +47,7 @@
             navigator.geolocation.clearWatch(watchId);
             document.querySelector('#location').innerHTML =
                 `Location: ${gpsLocation[0]}, ${gpsLocation[1]} <br> Accuracy: ${gpsLocation[2].toFixed(3)}m`;
-                document.querySelector('#copyButtonContainer').style.display = 'block';
+                document.querySelector('#copyButtonContainer').style.visibility = 'visible';
             clearInterval(intervalId);
             info.innerHTML = 'Please press the above button to copy the location information.';
         }, 30000);
