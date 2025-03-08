@@ -88,6 +88,7 @@
                         "An unknown error occurred. This may be due to an insecure origin (use HTTPS or localhost).";
                     break;
             }
+            clearInterval(intervalId);
             info.innerHTML = 'Please refresh the page.';
             clearTimeout(timeoutId);
         }
