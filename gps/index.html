@@ -48,6 +48,7 @@
             document.querySelector('#location').innerHTML =
                 `Location: ${gpsLocation[0]}, ${gpsLocation[1]} <br> Accuracy: ${gpsLocation[2]}m`;
                 document.querySelector('#copyButtonContainer').style.display = 'block';
+            info.innerHTML = 'Please press the above button to copy the location information.';
         }, 30000);
 
         document.querySelector('#copyButton').addEventListener('click', async function() {
