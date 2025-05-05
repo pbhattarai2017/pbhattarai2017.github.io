@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Bresenham's Line Drawing Algorithm</title>
+    <style>
+      #pointsTable {
+        display: none;
+        border-collapse: collapse;
+        /* border: 1px solid #000; */
+        width: 100%;
+      }
+
+      #pointsTable td,
+      th {
+        border: 1px solid #000;
+        text-align: right;
+        padding: 2px;
+      }
+    </style>
+  </head>
+  <body>
+    <div>
+      <label for="point1">Point 1:</label>
+      <input id="point1" type="text" />
+    </div>
+    <div>
+      <label for="point2">Point 2:</label>
+      <input id="point2" type="text" /><br />
+    </div>
+    <div>
+      <button id="generateButton">Generate!</button>
+    </div>
+    <table id="pointsTable">
+      <thead>
+        <td>k</td>
+        <td>P<sub>k</sub></td>
+        <td>(x<sub>k + 1</sub>, y<sub>k + 1</sub>)</td>
+      </thead>
+      <tbody></tbody>
+    </table>
+    <script>
+      let generateButton = document.querySelector("#generateButton");
+      let pointsTable = document.querySelector("#pointsTable");
+      let point1Input = document.querySelector("#point1");
+      let point2Input = document.querySelector("#point2");
+
+      let regex = /^(\d+)\D+(\d+)/;
+
+      generateButton.addEventListener("click", (e) => {
+        pointsTable.style.display = "block";
+
+        let point1Text = point1Input.value.trim();
+        let point2Text = point2Input.value.trim();
+
+        let point1Matches = point1Text.match(regex);
+        let point2Matches = point2Text.match(regex);
+
+        if (point1Matches == null || point2Matches == null) {
+          return;
+        }
+
+        let x1 = point1Matches[1];
+        let y1 = point1Matches[2];
+        let x2 = point2Matches[1];
+        let y2 = point2Matches[2];
+
+        while (pointsTable.rows.length > 1) {
+          pointsTable.deleteRow(-1);
+        }
+
+        drawBresenhamLine(x1, y1, x2, y2);
+      });
+
+      function drawBresenhamLine(x1, y1, x2, y2) {
+        x1 = parseInt(x1);
+        y1 = parseInt(y1);
+        x2 = parseInt(x2);
+        y2 = parseInt(y2);
+
+        let dx = x2 - x1;
+        let dy = y2 - y1;
+        let dxAbs = Math.abs(dx);
+        let dyAbs = Math.abs(dy);
+        let isVertical = true;
+        let x = 0;
+        let y = 0;
+
+        let isSwapRequired = false;
+
+        if (dyAbs >= dxAbs) {
+          // vertical step
+
+          isVertical = true;
+          if (y2 < y1) {
+            isSwapRequired = true;
+          }
+        } else {
+          // horizontal step
+
+          isVertical = false;
+
+          if (x2 < x1) {
+            isSwapRequired = true;
+          }
+        }
+
+        if (isSwapRequired) {
+          //swap (x1, y1), (x2, y2)
+          let t = x1;
+          x1 = x2;
+          x2 = t;
+          t = y1;
+          y1 = y2;
+          y2 = t;
+        }
+
+        let h = 1;
+        dy = y2 - y1;
+        dx = x2 - x1;
+        if (dy * dx < 0) {
+          h = -1;
+        }
+
+        x = x1;
+        y = y1;
+
+        let dpf = 0;
+        let k = 0;
+
+        // plot (x, y)
+        pointsTable.insertRow(
+          -1
+        ).innerHTML = `<td colspan="2">First</td><td>(${x}, ${y})</td>`;
+
+        if (isVertical) {
+          //decision parameter function
+          dpf = 2 * dxAbs - dyAbs;
+
+          if (dpf >= 0) {
+            x = x + h;
+          }
+          y++;
+
+          // plot (x, y)
+          pointsTable.insertRow(
+            -1
+          ).innerHTML = `<td>${k}</td><td>${dpf}</td><td>(${x}, ${y})</td>`;
+
+          while (y < y2) {
+            k++;
+            if (dpf < 0) {
+              dpf = dpf + 2 * dxAbs;
+            } else {
+              dpf = dpf + 2 * dxAbs - 2 * dyAbs;
+            }
+
+            if (dpf >= 0) {
+              x = x + h;
+            }
+            y++;
+
+            // plot (x, y)
+            pointsTable.insertRow(
+              -1
+            ).innerHTML = `<td>${k}</td><td>${dpf}</td><td>(${x}, ${y})</td>`;
+          }
+        } else {
+          dpf = 2 * dyAbs - dxAbs;
+
+          if (dpf >= 0) {
+            y = y + h;
+          }
+          x++;
+
+          // plot (x, y)
+          pointsTable.insertRow(
+            -1
+          ).innerHTML = `<td>${k}</td><td>${dpf}</td><td>(${x}, ${y})</td>`;
+
+          while (x < x2) {
+            k++;
+            if (dpf < 0) {
+              dpf = dpf + 2 * dyAbs;
+            } else {
+              dpf = dpf + 2 * dyAbs - 2 * dxAbs;
+            }
+            if (dpf >= 0) {
+              y = y + h;
+            }
+            x++;
+            // plot (x, y)
+            pointsTable.insertRow(
+              -1
+            ).innerHTML = `<td>${k}</td><td>${dpf}</td><td>(${x}, ${y})</td>`;
+          }
+        }
+      }
+    </script>
+  </body>
+</html>
