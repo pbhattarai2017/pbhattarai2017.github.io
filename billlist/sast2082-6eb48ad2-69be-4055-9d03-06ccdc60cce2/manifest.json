@@ -1,0 +1,20 @@
+{
+  "name": "SAST 2082-83",
+  "short_name": "SAST 2082-83",
+  "description": "SAST 2082/83 Sales Details",
+  "start_url": "./",
+  "display": "fullscreen",
+  "background_color": "#ffffff",
+  "theme_color": "#000000",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "scope": "."
+}
+

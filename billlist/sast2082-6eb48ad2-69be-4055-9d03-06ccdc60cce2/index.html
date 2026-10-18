@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>URS 2082/83 Sales Details</title>
+
+	<link rel="manifest" href="manifest.json" />
+	<meta name="theme-color" content="#ffffff" /> <!-- optional – status bar color -->
+	<link rel="icon" href="icon-512.png" sizes="512x512" />
+	<link rel="apple-touch-icon" href="icon-512.png" />
+
+	<meta name="mobile-web-app-capable" content="yes" />
+	<meta name="apple-mobile-web-app-capable" content="yes" />
+	<meta name="apple-mobile-web-app-status-bar-style" content="default" />
+
+	<style>
+		:root {
+			--text-color: white;
+			--background-color: black;
+			--dark-text-color: black;
+		}
+
+		html {
+			font-size: 150%;
+		}
+
+		body {
+			margin: 8px;
+			padding: 0px;
+			background-color: var(--background-color);
+			color: var(--text-color);
+		}
+
+		table {
+			min-width: 100%;
+			border-collapse: collapse;
+		}
+
+		table,
+		th,
+		td {
+			border: 1px solid var(--text-color);
+		}
+
+		th,
+		td {
+			white-space: nowrap;
+		}
+
+		tr:nth-child(even) {
+			background-color: #A7C7E7;
+			color: var(--dark-text-color);
+		}
+
+		.table-container {
+			width: 100%;
+			overflow-x: auto;
+		}
+
+		.btn {
+			padding: 4px 20px;
+			font-size: 1.2rem;
+			font-weight: bold;
+			border: none;
+			border-radius: 8px;
+			background-color: #6200ee;
+			color: white;
+			cursor: pointer;
+
+			box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+			transition: all 0.2s ease-in-out;
+
+			z-index: 1000;
+		}
+
+		.fab-button {
+			position: fixed;
+			bottom: 16px;
+			left: 16px;
+
+			padding: 4px 20px;
+			font-size: 2rem;
+			font-weight: bold;
+			border: none;
+			border-radius: 8px;
+			background-color: #6200ee;
+			color: white;
+			cursor: pointer;
+
+			box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+			transition: all 0.2s ease-in-out;
+
+			z-index: 1000;
+		}
+
+		.fab-button:hover {
+			transform: translateY(-2px);
+			box-shadow: 0 7px 14px rgba(0, 0, 0, 0.15);
+		}
+
+		.fab-button:active {
+			transform: translateY(1px);
+			box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+		}
+
+		.text-align-right {
+			text-align: right;
+		}
+
+		#page {
+			display: flex;
+			flex-direction: column;
+		}
+
+		.grand-total-grid {
+			align-self: end;
+			display: grid;
+			grid-template-columns: 1fr 1fr;
+			padding-top: 8px;
+		}
+
+		.grand-total-grid> :nth-child(even) {
+			justify-self: end;
+		}
+
+		.go-btn {
+			position: fixed;
+			top: 16px;
+			left: 16px;
+			z-index: 1000;
+		}
+	</style>
+</head>
+
+<body>
+
+	<button class="btn go-btn" onclick="showInputDialog()">Go</button>
+
+	<div id="page">
+
+		<div style="align-self: end;">
+			<span>मितिः</span>
+			<span id="miti">२०००/०१/०१</span>
+		</div>
+
+		<div style="align-self: end;">
+			<span>बिजक न‍ंः</span>
+			<span id="billNumber" style="font-weight: bold;">01</span>
+		</div>
+
+		<div id="customer">Customer</div>
+		<div id="address">ठेगाना</div>
+		<div id="pan">पान नम्बर</div>
+
+		<div class="table-container">
+			<table id="invoice">
+				<thead>
+					<th>क्रसं</th>
+					<th>एच‍.एस कोड</th>
+					<th>विवरण</th>
+					<th>परिमाण</th>
+					<th>दर</th>
+					<th>जम्मा</th>
+				</thead>
+				<tbody id="particulars">
+				</tbody>
+			</table>
+		</div>
+		<div class="grand-total-grid">
+			<div>जम्माः</div>
+			<div id="basic">१,०००‍।००</div>
+
+			<div>छुटः</div>
+			<div>-</div>
+
+			<div>कर योग्यः</div>
+			<div id="taxable">१,०००।००</div>
+
+			<div>१३% भ्याटः</div>
+			<div id="tax">१३०।००</div>
+
+			<div>कूलः</div>
+			<div id="grandTotal">१,१३०।००</div>
+		</div>
+		<div>
+			<button class="fab-button" onclick="nextBill()">></button>
+		</div>
+	</div>
+
+	<dialog id="inputDialog">
+		<form method="dialog">
+			<p id="promptMessage">Bill#:</p>
+			<input type="text" required autofocus />
+			<div style="margin-top: 1rem; text-align: right;">
+				<button type="submit" class="btn" id="ok-button">OK</button>
+				<button type="button" id="cancel-button">Cancel</button>
+			</div>
+		</form>
+	</dialog>
+
+	<script src="data.js"></script>
+	
+	<script>
+
+		const dialog = document.querySelector("#inputDialog");
+
+		const toNepali = {
+			'0': '०',
+			'1': '१',
+			'2': '२',
+			'3': '३',
+			'4': '४',
+			'5': '५',
+			'6': '६',
+			'7': '७',
+			'8': '८',
+			'9': '९',
+			'.': '।',
+			'/': '/',
+			',': ','
+		};
+
+		const toEnglish = {
+			'0': '0',
+			'1': '1',
+			'2': '2',
+			'3': '3',
+			'4': '4',
+			'5': '5',
+			'6': '6',
+			'7': '7',
+			'8': '8',
+			'9': '9',
+			'.': '.',
+			'/': '/',
+			',': ','
+		};
+
+		let numerics = toEnglish;
+
+		function getFormattedNum(numString) {
+			const num = String(numString);
+			let devanagari = '';
+			for (let i = 0; i < num.length; i++) {
+				devanagari = devanagari + numerics[num[i]] ?? num[i];
+			}
+
+			return devanagari;
+		}
+
+		const state = {
+			maxSize: items.length,
+			currentBill: items[0][0],
+			currentIndex: 0,
+		};
+
+		const miti = document.querySelector('#miti');
+		const billNumber = document.querySelector('#billNumber');
+		const customer = document.querySelector('#customer');
+		const address = document.querySelector('#address');
+		const pan = document.querySelector('#pan');
+
+		const particulars = document.querySelector('#particulars');
+
+		const basicAmount = document.querySelector('#basic');
+		const taxableAmount = document.querySelector('#taxable');
+		const taxAmount = document.querySelector('#tax');
+		const grandTotal = document.querySelector('#grandTotal');
+
+		function getFormattedMiti(mitiString) {
+			if (mitiString.length != 8) {return mitiString;}
+			mitiString = getFormattedNum(mitiString);
+			const year = mitiString.substring(0, 4);
+			const month = mitiString.substring(4, 6);
+			const day = mitiString.substring(6, 8);
+
+			return year + '/' + month + '/' + day;
+		}
+
+		function getFormattedPAN(panString) {
+			if (panString.length != 9) {return panString;}
+			panString = getFormattedNum(panString);
+			const part1 = panString.substring(0, 3);
+			const part2 = panString.substring(3, 6);
+			const part3 = panString.substring(6, 9);
+
+			return part1 + ' ' + part2 + ' ' + part3;
+		}
+
+		function toBill(bill) {
+			const billString = String(bill);
+			for (let i = 0; i < state.maxSize; i++) {
+				if (items[i][0] == billString || Number(items[i][0]) == Number(bill)) {
+					state.currentBill = items[i][0];
+					state.currentIndex = i;
+					break;
+				}
+			}
+			showBill();
+		}
+
+		function nextBill() {
+			for (let i = state.currentIndex; i < state.maxSize; i++) {
+				if (items[i][0] != state.currentBill) {
+					state.currentBill = items[i][0];
+					state.currentIndex = i;
+					break;
+				}
+			}
+			showBill();
+		}
+
+		function showBill() {
+			particulars.innerHTML = '';
+			currentIndex = state.currentIndex;
+
+			// set invoice info
+
+			// Bill#, Miti, Customer, Address, PAN
+			billNumber.innerText = items[currentIndex][0];
+			miti.innerText = getFormattedMiti(items[currentIndex][1]);
+			customer.innerText = items[currentIndex][2];
+			address.innerText = items[currentIndex][3];
+			pan.innerText = getFormattedPAN(items[currentIndex][4]);
+
+			//SN, HSN, Particulars, Qty, UOM, Rate, VatAmount
+			for (let i = currentIndex; i < items.length; i++) {
+				if (items[i][0] != state.currentBill) {
+					break;
+				}
+
+				const row = particulars.insertRow(-1);
+				const sn = row.insertCell(0);
+				sn.style.textAlign = 'right';
+				sn.style.paddingRight = '2px';
+
+				const hsn = row.insertCell(1);
+				hsn.style.paddingLeft = '2px';
+
+				const particular = row.insertCell(2);
+				particular.style.paddingLeft = '2px';
+
+				const qty = row.insertCell(3);
+				qty.style.textAlign = 'right';
+				qty.style.paddingRight = '2px';
+
+				const rate = row.insertCell(4);
+				rate.style.textAlign = 'right';
+				rate.style.paddingRight = '2px';
+
+				const total = row.insertCell(5);
+				total.style.textAlign = 'right';
+				total.style.paddingRight = '2px';
+
+				sn.innerText = getFormattedNum(items[i][5]);
+				hsn.innerText = items[i][6];
+				particular.innerText = items[i][7];
+				qty.innerText = getFormattedNum(items[i][8]) + " " + items[i][9];
+				rate.innerText = items[i][10];
+				total.innerText = roundToTwo(Number(items[i][8]) * Number(items[i][10]));
+
+			}
+
+			// Taxfree, Taxable, Tax
+			const taxFreeValue = roundToTwo(Number(items[currentIndex][12]));
+			const taxableValue = roundToTwo(Number(items[currentIndex][13]));
+			const taxValue = roundToTwo(Number(items[currentIndex][14]));
+
+			basicAmount.innerText = getFormattedNum(thousandSeparated(roundToTwo(taxFreeValue + taxableValue)));
+			taxableAmount.innerText = getFormattedNum(thousandSeparated(taxableValue));
+			taxAmount.innerText = getFormattedNum(thousandSeparated(taxValue));
+			grandTotal.innerText = getFormattedNum(thousandSeparated(roundToTwo(taxFreeValue + taxableValue + taxValue)));
+
+		}
+
+		function roundToTwo(num) {
+			return +(Math.round(num + "e+2") + "e-2");
+		}
+
+		function thousandSeparated(num) {
+			const scale = 2;
+
+			const splits = String(num).split(".");
+
+			let intPart = splits[0].trim();
+			let fractionalPart = splits.length > 1 ? splits[1].trim() : "";
+
+			const hasNegativeSign = false;
+
+			if (intPart.startsWith("-")) {
+				hasNegativeSign = true;
+				intPart = intPart.substring(1);
+			}
+
+			const s = scale - fractionalPart.length;
+			for (let i = 0; i < s; i++) {
+				fractionalPart += "0";
+			}
+
+			const len = intPart.length;
+			const separated = new Array(len + (len > 3 ? Math.trunc((len - 3) / 2) + (len - 3) % 2 : 0));
+
+			let i = separated.length - 1;
+			let j = intPart.length - 1;
+
+			for (let k = 1; k <= 3 && i >= 0; k++) {
+				separated[i--] = intPart[j--];
+			}
+
+			for (let e = 0; j >= 0; e++) {
+				if (e % 2 == 0) {
+					separated[i--] = ",";
+				}
+				separated[i--] = intPart[j--];
+			}
+
+			return (hasNegativeSign ? "-" : "") + separated.join("") + "." + fractionalPart;
+		}
+
+		// for dialog modal
+		const okButton = dialog.querySelector('#ok-button');
+		const cancelButton = dialog.querySelector('#cancel-button');
+
+		okButton.addEventListener('click', () => {
+			const value = dialog.querySelector("input").value.trim();
+			toBill(value);
+		});
+
+		cancelButton.addEventListener('click', () => {
+			dialog.close();
+		});
+
+		function showInputDialog() {
+			dialog.showModal();
+			dialog.querySelector("input").value = '';
+		}
+
+		showBill();
+
+	</script>
+
+	<script>
+		window.addEventListener('load', () => {
+			if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.01') {
+				return;
+			}
+			if ('serviceWorker' in navigator) {
+				navigator.serviceWorker.register('sw.js', {scope: '.'})
+					.then(reg => console.log('Service Worker registered', reg))
+					.catch(err => console.error('Service Worker registration failed', err));
+
+			}
+		});
+	</script>
+
+</body>
+
+</html>
